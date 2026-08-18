@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Easy Cloudflared</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="Easy Cloudflared accueil"><span class="brand-mark">EC</span><span>Easy Cloudflared</span></a>
+      <span class="connection"><i></i> Local uniquement</span>
+    </header>
+    <section class="hero">
+      <p class="eyebrow">TUNNEL EXPRESS <span>01</span></p>
+      <h1>Votre app locale,<br><em>accessible partout.</em></h1>
+      <p class="intro">Créez un lien public temporaire en quelques secondes grâce à Cloudflare Tunnel.</p>
+    </section>
+    <section class="workspace" aria-label="Générateur de tunnel">
+      <div class="panel form-panel">
+        <div class="step"><span>01</span><div><h2>Adresse locale</h2><p>Le serveur que vous souhaitez partager</p></div></div>
+        <label for="local-url">URL de votre application</label>
+        <div class="input-wrap"><span>↗</span><input id="local-url" value="http://localhost:3000" placeholder="http://localhost:3000" autocomplete="url"></div>
+        <button class="primary" id="start"><span class="button-icon">✦</span><span>Générer le lien public</span></button>
+        <button class="secondary hidden" id="stop">Arrêter le tunnel</button>
+        <p class="hint">Cloudflared doit être installé et disponible dans le PATH.</p>
+      </div>
+      <div class="panel result-panel" id="result-panel">
+        <div class="step"><span>02</span><div><h2>Lien public</h2><p>Votre URL Cloudflare apparaîtra ici</p></div></div>
+        <div class="result-box" id="result-box"><span class="pulse"></span><span id="result-text">En attente du démarrage</span></div>
+        <button class="copy hidden" id="copy" title="Copier le lien"><span>Copier le lien</span><b>⌘</b></button>
+        <p class="status" id="status">Prêt à créer un tunnel temporaire.</p>
+      </div>
+    </section>
+    <footer><span>Propulsé par <strong>Cloudflare Quick Tunnels</strong></span><span>Les liens expirent à l’arrêt du tunnel.</span></footer>
+  </main>
+  <script src="/app.js"></script>
+</body>
+</html>

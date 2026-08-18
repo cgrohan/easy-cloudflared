@@ -1,0 +1,23 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap');
+
+:root { --ink: #14211f; --muted: #71807b; --line: #dbe5df; --paper: #f5f7f2; --lime: #d9f86a; --green: #1d6852; }
+* { box-sizing: border-box; }
+body { margin: 0; min-height: 100vh; color: var(--ink); background: #edf2eb; font-family: Manrope, sans-serif; }
+body::before { content: ''; position: fixed; inset: 0; pointer-events: none; opacity: .35; background-image: linear-gradient(rgba(20,33,31,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(20,33,31,.035) 1px, transparent 1px); background-size: 34px 34px; }
+.shell { position: relative; max-width: 1080px; margin: auto; padding: 28px 42px 24px; }
+.topbar, footer, .connection, .brand, .step, .input-wrap, .copy { display: flex; align-items: center; }
+.topbar { justify-content: space-between; }
+.brand { gap: 11px; color: var(--ink); font-size: 14px; font-weight: 800; text-decoration: none; letter-spacing: -.02em; }
+.brand-mark { display: grid; width: 32px; height: 32px; place-items: center; background: var(--ink); color: var(--lime); font: 500 10px 'DM Mono', monospace; letter-spacing: -.1em; }
+.connection { gap: 8px; color: var(--muted); font: 11px 'DM Mono', monospace; text-transform: uppercase; letter-spacing: .04em; }
+.connection i { width: 7px; height: 7px; border-radius: 50%; background: #6dbb55; box-shadow: 0 0 0 4px rgba(109,187,85,.16); }
+.hero { padding: 104px 0 58px; max-width: 690px; }
+.eyebrow { color: var(--green); font: 500 11px 'DM Mono', monospace; letter-spacing: .14em; }.eyebrow span { color: #a7b3ad; margin-left: 12px; }
+h1 { margin: 20px 0 17px; font-size: clamp(44px, 7vw, 78px); line-height: .99; letter-spacing: -.075em; font-weight: 800; } h1 em { color: var(--green); font-style: normal; }
+.intro { max-width: 410px; color: var(--muted); font-size: 15px; line-height: 1.7; }
+.workspace { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }.panel { min-height: 328px; padding: 30px; border: 1px solid rgba(20,33,31,.08); background: rgba(255,255,255,.72); box-shadow: 0 18px 50px rgba(52,74,63,.06); }
+.result-panel { background: var(--ink); color: white; }.step { gap: 15px; margin-bottom: 35px; }.step > span { color: var(--green); font: 500 12px 'DM Mono', monospace; }.result-panel .step > span { color: var(--lime); }.step h2 { margin: 0 0 4px; font-size: 17px; letter-spacing: -.03em; }.step p { margin: 0; color: var(--muted); font-size: 12px; }.result-panel .step p { color: #94a9a0; }
+label { display: block; margin-bottom: 9px; color: var(--muted); font: 11px 'DM Mono', monospace; text-transform: uppercase; }.input-wrap { gap: 10px; padding: 0 15px; height: 52px; border: 1px solid var(--line); background: white; }.input-wrap span { color: var(--green); font-size: 18px; }.input-wrap input { width: 100%; border: 0; outline: 0; color: var(--ink); background: transparent; font: 13px 'DM Mono', monospace; }
+button { border: 0; cursor: pointer; font: 700 12px Manrope, sans-serif; }.primary { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; height: 52px; margin-top: 14px; color: var(--ink); background: var(--lime); }.primary:hover { background: #c9ed54; }.button-icon { font-size: 16px; }.secondary { width: 100%; height: 40px; margin-top: 9px; color: var(--muted); background: transparent; }.hint { margin: 19px 0 0; color: var(--muted); font-size: 11px; }
+.result-box { display: flex; align-items: center; gap: 12px; min-height: 68px; padding: 0 17px; overflow: hidden; color: #9fb1a9; background: #253a34; font: 12px 'DM Mono', monospace; }.result-box.ready { color: var(--lime); }.pulse { width: 8px; height: 8px; flex: 0 0 auto; border-radius: 50%; background: #778c84; }.ready .pulse { background: var(--lime); box-shadow: 0 0 0 5px rgba(217,248,106,.12); }.copy { justify-content: space-between; width: 100%; height: 43px; margin-top: 12px; padding: 0 14px 0 17px; color: var(--ink); background: white; }.copy b { padding: 4px 7px; color: var(--muted); background: #edf2eb; font: 11px 'DM Mono', monospace; }.status { margin: 15px 0 0; color: #94a9a0; font-size: 11px; }.hidden { display: none; } footer { justify-content: space-between; padding-top: 28px; color: #83908a; font: 10px 'DM Mono', monospace; text-transform: uppercase; letter-spacing: .05em; } footer strong { color: var(--green); font-weight: 500; }
+@media (max-width: 700px) { .shell { padding: 22px 20px; }.hero { padding: 76px 0 42px; } h1 { font-size: 48px; }.workspace { grid-template-columns: 1fr; }.panel { min-height: 0; padding: 25px; } footer { align-items: flex-start; flex-direction: column; gap: 9px; line-height: 1.5; } }
