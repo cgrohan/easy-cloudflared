@@ -77,11 +77,11 @@ function startTunnel(localUrl) {
   });
   child.on('error', (error) => {
     tunnel.error = error.code === 'ENOENT'
-      ? 'cloudflared est introuvable. Installez-le puis relancez l’application.'
+      ? 'cloudflared was not found. Install it and restart the application.'
       : error.message;
   });
   child.on('exit', () => {
-    if (!tunnel.publicUrl && !tunnel.error) tunnel.error = 'Le tunnel s’est arrêté avant de fournir un lien.';
+    if (!tunnel.publicUrl && !tunnel.error) tunnel.error = 'The tunnel stopped before providing a link.';
     tunnel.process = null;
   });
 
@@ -91,14 +91,14 @@ function startTunnel(localUrl) {
 async function serveStatic(request, response) {
   const requested = request.url === '/' ? '/index.html' : request.url;
   const filePath = normalize(join(publicDir, requested.split('?')[0]));
-  if (!filePath.startsWith(publicDir)) return json(response, 403, { error: 'Accès refusé.' });
+  if (!filePath.startsWith(publicDir)) return json(response, 403, { error: 'Access denied.' });
   try {
     const content = await readFile(filePath);
     const types = { '.css': 'text/css', '.js': 'text/javascript', '.html': 'text/html' };
     response.writeHead(200, { 'Content-Type': `${types[extname(filePath)] ?? 'application/octet-stream'}; charset=utf-8` });
     response.end(content);
   } catch {
-    json(response, 404, { error: 'Page introuvable.' });
+    json(response, 404, { error: 'Page not found.' });
   }
 }
 
@@ -110,11 +110,11 @@ const server = createServer(async (request, response) => {
     request.on('end', () => {
       try {
         const { localUrl } = JSON.parse(body);
-        if (!isLocalUrl(localUrl)) return json(response, 400, { error: 'Utilisez une URL locale http://localhost ou http://127.0.0.1.' });
+        if (!isLocalUrl(localUrl)) return json(response, 400, { error: 'Use a local URL such as http://localhost or http://127.0.0.1.' });
         startTunnel(localUrl);
         json(response, 202, state());
       } catch {
-        json(response, 400, { error: 'Requête invalide.' });
+        json(response, 400, { error: 'Invalid request.' });
       }
     });
     return;
@@ -133,16 +133,16 @@ const server = createServer(async (request, response) => {
           stopAllTunnels();
           return json(response, 200, state());
         }
-        if (!stopTunnelById(String(id))) return json(response, 404, { error: 'Tunnel introuvable.' });
+        if (!stopTunnelById(String(id))) return json(response, 404, { error: 'Tunnel not found.' });
         json(response, 200, state());
       } catch {
-        json(response, 400, { error: 'Requête invalide.' });
+        json(response, 400, { error: 'Invalid request.' });
       }
     });
     return;
   }
   if (request.method === 'GET') return serveStatic(request, response);
-  json(response, 404, { error: 'Route introuvable.' });
+  json(response, 404, { error: 'Route not found.' });
 });
 
 server.listen(port, '127.0.0.1', () => {

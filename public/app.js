@@ -26,7 +26,7 @@ function render(data) {
   for (const tunnel of tunnels) {
     const localUrl = escapeHtml(tunnel.localUrl);
     const publicUrl = tunnel.publicUrl ? escapeHtml(tunnel.publicUrl) : '';
-    const displayText = escapeHtml(tunnel.publicUrl ?? (tunnel.error || (tunnel.running ? 'Connexion a Cloudflare en cours...' : 'Tunnel arrete.')));
+    const displayText = escapeHtml(tunnel.publicUrl ?? (tunnel.error || (tunnel.running ? 'Connecting to Cloudflare...' : 'Tunnel stopped.')));
     const item = document.createElement('article');
     item.className = `tunnel-item${tunnel.publicUrl ? ' ready' : ''}`;
     item.innerHTML = `
@@ -36,19 +36,19 @@ function render(data) {
       </div>
       <p class="public-url">${displayText}</p>
       <div class="tunnel-actions">
-        <button class="copy small${tunnel.publicUrl ? '' : ' hidden'}" data-action="copy" data-url="${publicUrl}"><span>Copier</span></button>
-        <button class="secondary small" data-action="stop" data-id="${tunnel.id}">Arreter</button>
+        <button class="copy small${tunnel.publicUrl ? '' : ' hidden'}" data-action="copy" data-url="${publicUrl}"><span>Copy</span></button>
+        <button class="secondary small" data-action="stop" data-id="${tunnel.id}">Stop</button>
       </div>
     `;
     list.appendChild(item);
   }
 
   if (tunnels.length === 0) {
-    statusText.textContent = 'Pret a creer un tunnel temporaire.';
+    statusText.textContent = 'Ready to create a temporary tunnel.';
   } else if (runningCount > 0) {
-    statusText.textContent = `${runningCount} tunnel(s) actif(s).`;
+    statusText.textContent = `${runningCount} active tunnel(s).`;
   } else {
-    statusText.textContent = 'Tous les tunnels sont arretes.';
+    statusText.textContent = 'All tunnels are stopped.';
   }
 
   ensurePolling(runningCount > 0);
@@ -94,8 +94,8 @@ list.addEventListener('click', async (event) => {
   if (button.dataset.action === 'copy') {
     await navigator.clipboard.writeText(button.dataset.url);
     const previous = button.querySelector('span')?.textContent;
-    if (button.querySelector('span')) button.querySelector('span').textContent = 'Copie';
-    statusText.textContent = 'Lien copie dans le presse-papiers.';
+    if (button.querySelector('span')) button.querySelector('span').textContent = 'Copied';
+    statusText.textContent = 'Link copied to clipboard.';
     setTimeout(() => {
       if (button.querySelector('span') && previous) button.querySelector('span').textContent = previous;
     }, 1300);
@@ -112,4 +112,4 @@ list.addEventListener('click', async (event) => {
   }
 });
 
-refresh().catch(() => { statusText.textContent = 'Impossible de joindre le serveur local.'; });
+refresh().catch(() => { statusText.textContent = 'Unable to reach the local server.'; });

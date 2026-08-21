@@ -2,7 +2,7 @@
   "name": "easy-cloudflared",
   "version": "1.0.0",
   "private": true,
-  "description": "Une interface locale simple pour creer un tunnel Cloudflare temporaire.",
+  "description": "A simple local interface for creating a temporary Cloudflare tunnel.",
   "type": "module",
   "scripts": {
     "start": "node server.js"
