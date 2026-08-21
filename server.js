@@ -7,7 +7,8 @@ import { fileURLToPath } from 'node:url';
 const root = fileURLToPath(new URL('.', import.meta.url));
 const publicDir = join(root, 'public');
 const port = Number(process.env.PORT) || 8787;
-let tunnel = null;
+const tunnels = new Map();
+let nextTunnelId = 1;
 
 function json(response, status, body) {
   response.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8' });
@@ -16,10 +17,14 @@ function json(response, status, body) {
 
 function state() {
   return {
-    running: Boolean(tunnel?.process && !tunnel.process.killed),
-    localUrl: tunnel?.localUrl ?? null,
-    publicUrl: tunnel?.publicUrl ?? null,
-    error: tunnel?.error ?? null
+    tunnels: [...tunnels.values()].map((item) => ({
+      id: item.id,
+      running: Boolean(item.process && !item.process.killed && item.process.exitCode === null),
+      localUrl: item.localUrl,
+      publicUrl: item.publicUrl,
+      error: item.error,
+      createdAt: item.createdAt
+    }))
   };
 }
 
@@ -33,21 +38,32 @@ function isLocalUrl(value) {
   }
 }
 
-function stopTunnel() {
-  if (tunnel?.process && !tunnel.process.killed) {
+function stopTunnelById(id) {
+  const tunnel = tunnels.get(id);
+  if (!tunnel) return false;
+  if (tunnel.process && !tunnel.process.killed) {
     tunnel.process.kill();
   }
-  tunnel = null;
+  tunnels.delete(id);
+  return true;
+}
+
+function stopAllTunnels() {
+  for (const id of tunnels.keys()) {
+    stopTunnelById(id);
+  }
 }
 
 function startTunnel(localUrl) {
-  stopTunnel();
+  const id = String(nextTunnelId++);
   const child = spawn('cloudflared', ['tunnel', '--url', localUrl], {
     windowsHide: true,
     stdio: ['ignore', 'pipe', 'pipe']
   });
 
-  tunnel = { process: child, localUrl, publicUrl: null, error: null };
+  const tunnel = { id, process: child, localUrl, publicUrl: null, error: null, createdAt: Date.now() };
+  tunnels.set(id, tunnel);
+
   const onOutput = (chunk) => {
     const output = chunk.toString();
     const match = output.match(/https:\/\/[a-z0-9-]+\.trycloudflare\.com/);
@@ -65,8 +81,11 @@ function startTunnel(localUrl) {
       : error.message;
   });
   child.on('exit', () => {
-    if (tunnel?.process === child && !tunnel.publicUrl) tunnel.error ??= 'Le tunnel s’est arrêté avant de fournir un lien.';
+    if (!tunnel.publicUrl && !tunnel.error) tunnel.error = 'Le tunnel s’est arrêté avant de fournir un lien.';
+    tunnel.process = null;
   });
+
+  return tunnel;
 }
 
 async function serveStatic(request, response) {
@@ -101,8 +120,26 @@ const server = createServer(async (request, response) => {
     return;
   }
   if (request.method === 'POST' && request.url === '/api/stop') {
-    stopTunnel();
-    return json(response, 200, state());
+    let body = '';
+    request.on('data', (chunk) => { body += chunk; });
+    request.on('end', () => {
+      if (!body) {
+        stopAllTunnels();
+        return json(response, 200, state());
+      }
+      try {
+        const { id } = JSON.parse(body);
+        if (!id) {
+          stopAllTunnels();
+          return json(response, 200, state());
+        }
+        if (!stopTunnelById(String(id))) return json(response, 404, { error: 'Tunnel introuvable.' });
+        json(response, 200, state());
+      } catch {
+        json(response, 400, { error: 'Requête invalide.' });
+      }
+    });
+    return;
   }
   if (request.method === 'GET') return serveStatic(request, response);
   json(response, 404, { error: 'Route introuvable.' });
@@ -112,4 +149,4 @@ server.listen(port, '127.0.0.1', () => {
   console.log(`Easy Cloudflared: http://127.0.0.1:${port}`);
 });
 
-process.on('SIGINT', () => { stopTunnel(); server.close(() => process.exit(0)); });
+process.on('SIGINT', () => { stopAllTunnels(); server.close(() => process.exit(0)); });

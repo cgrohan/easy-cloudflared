@@ -23,13 +23,13 @@
         <label for="local-url">URL de votre application</label>
         <div class="input-wrap"><span>↗</span><input id="local-url" value="http://localhost:3000" placeholder="http://localhost:3000" autocomplete="url"></div>
         <button class="primary" id="start"><span class="button-icon">✦</span><span>Générer le lien public</span></button>
-        <button class="secondary hidden" id="stop">Arrêter le tunnel</button>
+        <button class="secondary hidden" id="stop-all">Arrêter tous les tunnels</button>
         <p class="hint">Cloudflared doit être installé et disponible dans le PATH.</p>
       </div>
       <div class="panel result-panel" id="result-panel">
-        <div class="step"><span>02</span><div><h2>Lien public</h2><p>Votre URL Cloudflare apparaîtra ici</p></div></div>
-        <div class="result-box" id="result-box"><span class="pulse"></span><span id="result-text">En attente du démarrage</span></div>
-        <button class="copy hidden" id="copy" title="Copier le lien"><span>Copier le lien</span><b>⌘</b></button>
+        <div class="step"><span>02</span><div><h2>Tunnels actifs</h2><p>Un lien Cloudflare par service local</p></div></div>
+        <div class="empty-state" id="empty-state">Aucun tunnel en cours.</div>
+        <section class="tunnel-list" id="tunnel-list" aria-live="polite"></section>
         <p class="status" id="status">Prêt à créer un tunnel temporaire.</p>
       </div>
     </section>
